@@ -52,7 +52,7 @@ public class StockController {
     @GetMapping("/stock/add")
     public String add(Model model) {
         List<BookMst> bookMstList = this.bookMstService.findAll();
- 
+
         model.addAttribute("bookMstList", bookMstList);
         model.addAttribute("stockStatus", StockStatus.values());
  
