@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import jakarta.validation.constraints.FutureOrPresent;
+//import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jp.co.metateam.library.values.RentalStatus;
@@ -49,12 +49,11 @@ public class RentalManageDto {
 
     @DateTimeFormat(pattern="yyyy-MM-dd")
     @NotNull(message="貸出予定日は必須です")
-    //@FutureOrPresent(message="貸出予定日は過去の日付けは選択できません")
     private Date expectedRentalOn;
 
     @DateTimeFormat(pattern="yyyy-MM-dd")
     @NotNull(message="返却予定日は必須です")
-    //@FutureOrPresent(message="返却予定日は過去の日付けは選択できません")
+
     private Date expectedReturnOn;
 
     private Timestamp rentaledAt;
@@ -68,8 +67,6 @@ public class RentalManageDto {
     private Account account;
 
     public Optional<String> isValidStatus(Integer preStatus) {
-
-        String errorMassage = "貸出ステータスは「%s」から「%s」に変更できません";
 
         if(!preStatus.equals(this.status)) {
             

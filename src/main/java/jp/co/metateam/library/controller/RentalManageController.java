@@ -8,30 +8,21 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import io.micrometer.common.util.StringUtils;
-
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.validation.FieldError;
- 
+
 import jakarta.validation.Valid;
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
  
 import jp.co.metateam.library.model.Account;
-import jp.co.metateam.library.model.AccountDto;
-import jp.co.metateam.library.model.BookMstDto;
 import jp.co.metateam.library.service.AccountService;
-import jp.co.metateam.library.values.AuthorizationTypes;
 import jp.co.metateam.library.model.RentalManage;
 import jp.co.metateam.library.model.RentalManageDto;
 import jp.co.metateam.library.service.RentalManageService;
 import jp.co.metateam.library.values.RentalStatus;
 import jp.co.metateam.library.values.StockStatus;
 import jp.co.metateam.library.model.Stock;
-import jp.co.metateam.library.model.StockDto;
 import jp.co.metateam.library.repository.RentalManageRepository;
 import jp.co.metateam.library.service.StockService;
  
@@ -39,7 +30,6 @@ import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Date;
 
  
 /**
@@ -52,19 +42,19 @@ public class RentalManageController{
     private final AccountService accountService;
     private final RentalManageService rentalManageService;
     private final StockService stockService;
-    private final RentalManageRepository rentalManageRepository;// 追加
+    private final RentalManageRepository rentalManageRepository;
  
     @Autowired
     public RentalManageController(
         AccountService accountService,
         RentalManageService rentalManageService,
         StockService stockService,
-        RentalManageRepository rentalManageRepository// 追加
+        RentalManageRepository rentalManageRepository
     ) {
         this.accountService = accountService;
         this.rentalManageService = rentalManageService;
         this.stockService = stockService;
-        this.rentalManageRepository = rentalManageRepository;// 追加
+        this.rentalManageRepository = rentalManageRepository;
     }
  
     /**
@@ -85,7 +75,6 @@ public class RentalManageController{
     @GetMapping("/rental/add")
     public String add(Model model){
         //テーブルから情報を持ってくる
-        List<RentalManage> rentalManageList= this.rentalManageService.findAll();
         List<Stock> stockList = this.stockService.findStockAvailableAll();
         List<Account> accountList= this.accountService.findAll();
  
@@ -158,7 +147,6 @@ public class RentalManageController{
        
         if (!model.containsAttribute("rentalManageDto")){//modelにrentalManageDtoが含まれているかチェック
             RentalManageDto rentalManageDto = new RentalManageDto();//もし含まれていなければ、RentalManageDtoを新しく作成
-            Long idLong = Long.parseLong(id);
             RentalManage rentalManage= this.rentalManageService.findById(Long.valueOf(id));//idに紐づいたrentalManageオブジェクトを取得
              
  
@@ -173,7 +161,7 @@ public class RentalManageController{
  
         }
    
-            return "rental/edit";//ここに返す
+            return "rental/edit";
     }
     /**
     * Postのリクエストがあった場合にこの処理を行う

@@ -93,12 +93,12 @@ public class RentalManageService {
         try {
             Account account = this.accountRepository.findByEmployeeId(rentalManageDto.getEmployeeId()).orElse(null);
             if (account == null) {
-                throw new Exception("RentalManage record not found.");
+                throw new Exception("Account not found.");
             }//アカウント情報をデータベースから引っ張ってくる・nullの場合は例外に投げる処理
  
             Stock stock = this.stockRepository.findById(rentalManageDto.getStockId()).orElse(null);
             if (stock == null) {
-                throw new Exception("RentalManage record not found.");
+                throw new Exception("Stock not found.");
             }//在庫情報をデータベースから引っ張ってくる・nullの場合は例外に投げる処理
             RentalManage rentalManage = findById(id);
             if (rentalManage == null) {
