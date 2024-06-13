@@ -1,6 +1,7 @@
 package jp.co.metateam.library.controller;
  
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,6 +31,7 @@ import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Date;
 
  
 /**
@@ -73,18 +75,28 @@ public class RentalManageController{
     }
  
     @GetMapping("/rental/add")
-    public String add(Model model){
+    public String add(@RequestParam(required = false) String stockId,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date expectedRentalOn,
+            Model model) {
+
         //テーブルから情報を持ってくる
         List<Stock> stockList = this.stockService.findStockAvailableAll();
         List<Account> accountList= this.accountService.findAll();
  
-     //モデル
+        //モデル
         model.addAttribute("rentalStatus", RentalStatus.values());
         model.addAttribute("stockList", stockList);
         model.addAttribute("accounts", accountList);
  
         if (!model.containsAttribute("rentalManageDto")){
-            model.addAttribute("rentalManageDto", new RentalManageDto());
+            RentalManageDto rentalManageDto = new RentalManageDto();
+            
+            if (stockId != null && expectedRentalOn != null){
+                rentalManageDto.setStockId(stockId);
+                rentalManageDto.setExpectedRentalOn(expectedRentalOn);
+            }
+            model.addAttribute("rentalManageDto",rentalManageDto);
+            
         }
  
         return "rental/add";
@@ -172,6 +184,26 @@ public class RentalManageController{
 
         try {
 
+            Date expectedRentalOn = rentalManageDto.getExpectedRentalOn();
+            Date expectedReturnOn = rentalManageDto.getExpectedReturnOn();
+                
+            Optional<String> dayError = rentalManageDto.ValidDateTime(expectedRentalOn,expectedReturnOn);
+            if(dayError.isPresent()){
+                FieldError fieldError = new FieldError("rentalManageDto","expectedReturnOn", dayError.get());
+                //dateErrorから取得したエラーメッセージをfieldErrorに入れる
+                result.addError(fieldError);
+                //resultにエラーの情報を入れる
+                throw new Exception("Validation error");
+                //エラーを投げる
+            }
+
+            Optional<String> c = rentalManageService.Account(rentalManageDto.getEmployeeId());
+            if (c.isPresent()){
+                FieldError fieldError = new FieldError("rentalManageDto","employeeId",c.get());
+                result.addError(fieldError);
+                throw new Exception("Validetion error");
+            }
+
             String errorMessage = checkInventoryStatus(rentalManageDto.getStockId());
             if (errorMessage != null) {
                 result.addError(new FieldError("rentalManageDto", "stockId", errorMessage));
@@ -216,6 +248,7 @@ public class RentalManageController{
             //貸出予定日のバリデーションチェック
             if (rentalManage.getStatus() == RentalStatus.RENT_WAIT.getValue() &&
                 rentalManageDto.getStatus() == RentalStatus.RENTAlING.getValue()){
+                //貸出ステータスを「貸出待ち」から「貸出中」に変更するとき
                     
                     if (rentalManageDto.isValidRentalDate() != 0){
                         FieldError fieldError = new FieldError("rentalManageDto","expectedRentalOn", "貸出予定日は現在の日付に設定してください");
@@ -226,6 +259,7 @@ public class RentalManageController{
             //返却予定日のバリデーションチェック
             }else if (rentalManage.getStatus() == RentalStatus.RENTAlING.getValue() &&
                rentalManageDto.getStatus() == RentalStatus.RETURNED.getValue()){
+                //貸出ステータスを「貸出中」から「返却済み」に変更するとき
                 
                 if(rentalManageDto.isValidReturnDate() != 0){
                     FieldError fieldError = new FieldError("rentalManageDto","expectedReturnOn", "返却予定日は現在の日付に設定してください");
@@ -239,7 +273,7 @@ public class RentalManageController{
             return "redirect:/rental/index";
 
         } catch (Exception e) {
-            // エラーが発生した場合の処理
+            // エラーが発生した場合の処理a
             log.error("更新処理中にエラーが発生しました: " + e.getMessage());
             model.addAttribute("errorMessage", "更新処理中にエラーが発生しました");
  
