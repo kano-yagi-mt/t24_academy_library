@@ -173,7 +173,7 @@ public class RentalManageController{
  
         }
    
-            return "rental/edit";
+        return "rental/edit";
     }
     /**
     * Postのリクエストがあった場合にこの処理を行う
@@ -273,7 +273,7 @@ public class RentalManageController{
             return "redirect:/rental/index";
 
         } catch (Exception e) {
-            // エラーが発生した場合の処理a
+            // エラーが発生した場合の処理
             log.error("更新処理中にエラーが発生しました: " + e.getMessage());
             model.addAttribute("errorMessage", "更新処理中にエラーが発生しました");
  

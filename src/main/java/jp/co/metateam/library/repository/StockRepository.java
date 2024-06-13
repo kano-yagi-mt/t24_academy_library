@@ -24,7 +24,7 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
     List<Stock> findByBookMstIdAndStatus(Long book_id,Integer status);
     //書籍IDと在庫ステータス
 
-    //日付けごとの在庫数
+    //SQLで取得
     @Query(value = "SELECT s.id " +
             "FROM stocks s " +
             "LEFT JOIN rental_manage rm ON s.id = rm.stock_id " +

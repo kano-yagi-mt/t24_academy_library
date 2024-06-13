@@ -1,13 +1,10 @@
 package jp.co.metateam.library.service;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Random;
 import java.util.Date;
 import java.util.Calendar;
 
@@ -16,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jp.co.metateam.library.constants.Constants;
-import jp.co.metateam.library.controller.StockController;
 import jp.co.metateam.library.model.BookMst;
 import jp.co.metateam.library.model.CalendarDto;
 import jp.co.metateam.library.model.DailyDuplication;
@@ -25,9 +21,6 @@ import jp.co.metateam.library.model.StockDto;
 import jp.co.metateam.library.repository.BookMstRepository;
 import jp.co.metateam.library.repository.RentalManageRepository;
 import jp.co.metateam.library.repository.StockRepository;
-
-//import java.util.Map;
-
 @Service
 public class StockService {
     private final BookMstRepository bookMstRepository;
@@ -179,5 +172,4 @@ public class StockService {
         }
         return values;
     }
-}
-    
+}    
